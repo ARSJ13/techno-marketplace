@@ -1,5 +1,8 @@
 # techno
 
+### application developed in the Vue2 course of the Origamid platform
+[Origamid](https://www.origamid.com)
+
 ## Project setup
 ```
 npm install
