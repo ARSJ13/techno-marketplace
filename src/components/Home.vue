@@ -1,7 +1,15 @@
 <template>    
   <div>
-    <Header :count="count"></Header>
-      <div>{{ carrinho }}</div>
+    <Header :priceTotal="priceTotal | precoReal" :count="carrinho.length"></Header>
+    <div class="carrinho-container">
+      <ul>
+        <li v-for="(item, id) in carrinho" :key="id">
+          <button class="carrinho-del-btn" @click="deleteItem(id)">Remover item</button>
+          <h3>{{ item.nome }}</h3>
+          <p>{{ item.preco }}</p>
+        </li>
+      </ul>
+    </div>
     <section class="modal" v-if="produto" @click="closeModal">
       <div class="modal-container">
         <div class="modal-img">
@@ -36,6 +44,10 @@
         </div>
       </div>
     </section>
+
+    <div class="alert-container" :class="{active : alertActive}">
+      <p class="alert-msg">{{ alertMsg }}</p>
+    </div>
   </div>
 </template>
 
@@ -53,12 +65,25 @@ export default {
       produtos: [],
       produto: "",
       count: 0,
-      carrinho: []
+      carrinho: [],
+      alertMsg: "Item adicionado",
+      alertActive: false
     }
   },
   filters:{
     precoReal(valor){
       return valor.toLocaleString("pt-BR", {style: "currency", currency: "BRL"})
+    }
+  },
+  computed:{
+    priceTotal(){
+      let total = 0
+      if(this.carrinho.length){
+        this.carrinho.forEach( item =>{
+          total += item.preco;
+        })
+      }
+      return total
     }
   },
   methods:{
@@ -85,13 +110,46 @@ export default {
       }
     },
     adicionarItem(){
-      this.count++;
       this.produto.estoque--;
-      this.carrinho.push(this.produto.nome);
+      const {id, nome, preco} = this.produto;
+      this.carrinho.push({id, nome, preco});
+      this.alert(`${nome} adicionado ao carrinho`);
+    },
+    deleteItem(id){
+      this.carrinho.splice(id, 1);
+    },
+    checkLocalStorage(){
+      if(window.localStorage.carrinho){
+        this.carrinho = JSON.parse(window.localStorage.carrinho);
+      }
+    },
+    alert(msg){
+      this.alertActive = true
+      this.alertMsg = msg;
+      setTimeout(()=>{
+        this.alertActive = false
+      }, 2000)
+    },
+    router(){
+      const hash = document.location.hash;
+      if(hash){
+        this.fetchProduto(hash.replace("#",""));
+      }
+    }
+  },
+  watch:{
+    produto(){
+      document.title = this.produto.nome || "Techno";
+      const hash = this.produto.id || "";
+      history.pushState(null, null, `#${hash}`);
+    },
+    carrinho(){
+      window.localStorage.carrinho = JSON.stringify(this.carrinho);
     }
   },
   created(){
-    this.fetchProdutos()
+    this.fetchProdutos(),
+    this.checkLocalStorage()
   }
 }
 </script>
@@ -233,5 +291,43 @@ export default {
   }
   .produto-price{
     color: rgba(0, 0, 0, 0.5);
+  }
+
+  /* ALERTA */
+
+  .alert-container{
+    position: absolute;
+    top: 20px;
+    left: 0px;
+    z-index: 10;
+    width: 100%;
+    text-align: center;
+    display: none;
+  }
+
+  .alert-container.active{
+    display: block;
+    animation: fadeInDown 300ms forwards;
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translate3d(0, -30px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .alert-msg{
+    background: #fff;
+    display: inline-block;
+    padding: 20px 40px;
+    border: 2px solid #000;
+    font-weight: bold;
+    box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 4px 10px rgba(0, 0, 0, 0.2);
+
   }
 </style>

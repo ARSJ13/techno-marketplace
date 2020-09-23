@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <img class="logo" src="../assets/techno.svg" alt="Techno">
-    <div class="carrinho-menu">{{ count }} |</div>
+    <div class="carrinho-menu">{{ priceTotal }} | {{ count }}</div>
   </header>
 </template>
 
@@ -9,7 +9,7 @@
 
 export default {
   name: "Header",
-  props: ['count']
+  props: ['count', 'priceTotal']
 }
 </script>
 
