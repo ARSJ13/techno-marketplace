@@ -1,14 +1,7 @@
 <template>    
   <div>
-    <Header :priceTotal="priceTotal | precoReal" :count="carrinho.length"></Header>
-    <div class="carrinho-container">
-      <ul>
-        <li v-for="(item, id) in carrinho" :key="id">
-          <button class="carrinho-del-btn" @click="deleteItem(id)">Remover item</button>
-          <h3>{{ item.nome }}</h3>
-          <p>{{ item.preco }}</p>
-        </li>
-      </ul>
+    <div @click="carActive=true">
+      <Header :priceTotal="priceTotal | precoReal" :count="carrinho.length"></Header>
     </div>
     <section class="modal" v-if="produto" @click="closeModal">
       <div class="modal-container">
@@ -48,6 +41,26 @@
     <div class="alert-container" :class="{active : alertActive}">
       <p class="alert-msg">{{ alertMsg }}</p>
     </div>
+
+    <section class="car-modal" :class="{ativo: carActive}" @click="closeCarModal">
+      <div class="car-container">
+        <button class="car-close" @click="carActive = false">X</button>
+        <h2 class="car-title">Carrinho</h2>
+        <div v-if="carrinho.length>=1">
+          <ul class="car-list">
+            <li v-for="(item, index) in carrinho" :key="index" class="car-item">
+              <p> {{ item.nome }} </p>
+              <p class="car-price"> {{ item.preco | precoReal }} </p>
+              <button class="car-remove" @click="deleteItem(index)">X</button>
+            </li>
+          </ul>
+          <p class="car-total">{{ priceTotal | precoReal }}</p>
+          <button class="car-submit">Finalizar Compra</button>
+        </div>
+        <p v-else>O carrinho está vazio!</p>
+      </div>
+    </section>
+
   </div>
 </template>
 
@@ -66,6 +79,7 @@ export default {
       produto: "",
       count: 0,
       carrinho: [],
+      carActive: false,
       alertMsg: "Item adicionado",
       alertActive: false
     }
@@ -107,6 +121,11 @@ export default {
     closeModal({target, currentTarget}){
       if (target === currentTarget) {
         this.produto = false;
+      }
+    },
+    closeCarModal({target, currentTarget}){
+      if (target === currentTarget) {
+        this.carActive = false;
       }
     },
     adicionarItem(){
@@ -155,6 +174,103 @@ export default {
 </script>
 
 <style scoped>
+/* MODAL CAR */
+.car-modal::before{
+  content: "";
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+}
+.car-modal{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  padding: 20px;
+  display: none;
+}
+.car-modal.ativo{
+  display: block;
+}
+.car-close{
+  border-radius: 50%;
+  border: 2px solid #000;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 1rem;
+  background: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);  
+}
+.car-close:hover{
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+  outline: none;
+  transition: ease-in-out 200ms;
+}
+.car-container{
+  position: relative;
+  margin: 80px auto;
+  background: #fff;
+  padding: 40px;
+  max-width: 800px;
+  animation: fadeInDown 300ms forwards;
+}
+.car-item{
+  display: grid;
+  grid-template-columns: 1fr 1fr 50px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 15px 0;
+}
+.car-title{
+  margin-bottom: 10px;
+  border-bottom: 2px solid #000;
+  font-size: 1.5rem;
+  padding-bottom: 10px;
+}
+.car-remove{
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  outline: none;
+  background: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.car-price{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.car-total{
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 50px;
+  margin: 20px 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.car-submit{
+  display: block;
+  margin-left: auto;
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  outline: none;
+}
+
+
+/* MODAL PRODUTO */
   .modal::before{
     content: "";
     position: fixed;
