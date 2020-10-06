@@ -13,3 +13,54 @@ body{
 ul{
   list-style: none;
 }
+
+@media screen and (max-width:900px){
+  #app{
+    padding: 0 10px;
+  }
+  .produtos{
+    margin-top: 40px;
+  }
+  .produto{
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 300px;
+    margin: 30px auto;
+  }
+  .produto>img.produto-img{
+    margin-right: 0rem;
+    max-width: 100%;
+  }
+  .produto-body{
+    padding: 20px;
+  }
+  .produto-body>h2.produto-name{
+    font-size: 1.5rem;
+  }
+
+  /* MODAL */
+  #app>div>section.modal{
+    padding: 10px;
+  }
+  .modal>div.modal-container{
+    grid-gap: 20px;
+    background-color: #fff;
+    padding: 10px 0;
+  }
+  .modal-container>div.modal-img{
+    grid-row: 2;
+    width: 100%;
+  }
+  .modal-container>div.modal-img>img{
+    width: 100%;
+    max-width: initial;
+  }
+  .modal-container>div.modal-body{
+    grid-column: 1;
+    padding: 10px;
+  }
+  .modal-container>div.modal-review{
+    grid-column: 1;
+    padding: 10px;
+  }
+}

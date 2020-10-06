@@ -142,6 +142,14 @@ export default {
         this.carrinho = JSON.parse(window.localStorage.carrinho);
       }
     },
+    compararEstoque(){
+      const items = this.carrinho.filter(item => {
+        if (item.id === this.produto.id) {
+          return true;
+        }
+      })
+      this.produto.estoque = this.produto.estoque - items.length;
+    },
     alert(msg){
       this.alertActive = true
       this.alertMsg = msg;
@@ -161,6 +169,9 @@ export default {
       document.title = this.produto.nome || "Techno";
       const hash = this.produto.id || "";
       history.pushState(null, null, `#${hash}`);
+      if (this.produto) {
+        this.compararEstoque()
+      }
     },
     carrinho(){
       window.localStorage.carrinho = JSON.stringify(this.carrinho);
